@@ -34,13 +34,18 @@ lightly edited.
 ```
 python >= 3.11
 plotly >= 5.0
+pytimeparse >= 1.1.8   # for human-readable time strings
 kaleido # optional — only needed for PNG / PDF / SVG export
 ```
 
 Install dependencies:
 
 ```bash
-pip install plotly kaleido
+# Using pip
+pip install plotly pytimeparse kaleido
+
+# Using uv (recommended)
+uv add plotly pytimeparse kaleido
 ```
 
 ---
@@ -70,10 +75,13 @@ it is not found, the script will exit with an error message.
 
 ## Coordinate system
 
-Both axes are logarithmic. The raw values stored in the TOML are the
-*exponents*:
+Both axes are logarithmic. X-axis values can be specified as either:
+- **Numeric**: log₁₀ seconds (traditional format)  
+- **String**: human-readable time expressions (new feature)
 
-### X axis — duration of the event (log₁₀ seconds)
+### X axis — duration of the event
+
+**Option 1: Numeric values (log₁₀ seconds)**
 
 | x value | Meaning |
 |---|---|
@@ -88,6 +96,31 @@ Both axes are logarithmic. The raw values stored in the TOML are the
 | 13.50 | 1 million years |
 | 15.50 | 100 million years |
 | 17.10 | ~4 billion years |
+
+**Option 2: String values (human-readable time expressions)**
+
+You can now use intuitive time strings instead of calculating log₁₀ values:
+
+| Example strings | Equivalent numeric value |
+|---|---|
+| `"1 millisecond"`, `"1 ms"` | −3.0 |
+| `"1 minute"` | 1.78 |
+| `"1 hour"` | 3.56 |
+| `"1 day"` | 4.94 |
+| `"1 week"` | 5.78 |
+| `"1 year"` | 7.50 |
+| `"1 decade"` | 8.50 |
+| `"1 century"` | 9.50 |
+| `"10 Myr"` (10 million years) | 14.50 |
+| `"4 Gyr"` (4 billion years) | 17.10 |
+
+**Supported time units:**
+- **Sub-second**: nanoseconds, microseconds, milliseconds (`"500 ns"`, `"10 μs"`, `"5 ms"`)
+- **Standard**: seconds, minutes, hours, days, weeks (`"30 seconds"`, `"2 hours"`, `"3 weeks"`)  
+- **Long-term**: years, decades, centuries, millennia (`"5 years"`, `"2 decades"`, `"3 millennia"`)
+- **Geological**: million years (Myr), billion years (Gyr) (`"65 Myr"`, `"4.5 Gyr"`)
+
+If a time string cannot be parsed, the script will print a warning and skip that data point.
 
 ### Y axis — spatial scale (log₁₀ metres)
 
@@ -194,6 +227,7 @@ Each point is a TOML array-of-tables entry. `label`, `x`, `y`, and `category`
 are required; `description` is optional but strongly recommended — it is the
 text that appears in the hover tooltip.
 
+**Example with numeric x value:**
 ```toml
 [[points]]
 label       = "Seasonal influenza antigenic drift"
@@ -202,6 +236,38 @@ y           = 7.1       # log10 metres  → global scale
 category    = "epidemic"
 description = "HA/NA accumulate mutations under antibody pressure over 1–2
 years — enough to require annual vaccine reformulation globally."
+```
+
+**Example with string x value:**
+```toml
+[[points]]
+label       = "Viral membrane budding"
+x           = "2 minutes"    # human-readable time string
+y           = -6.0           # log10 metres → cell scale
+category    = "molecular"
+description = "Enveloped viruses bud from the plasma membrane in minutes,
+hijacking host ESCRT machinery."
+```
+
+**More string examples:**
+```toml
+[[points]]
+label       = "Drug resistance emergence"
+x           = "3 weeks"      # weeks to months timescale
+y           = -0.3
+category    = "within"
+
+[[points]]
+label       = "Ancient virus revival"
+x           = "30000 years"  # can specify large numbers + unit
+y           = 4.0
+category    = "deep"
+
+[[points]]
+label       = "Geological timescale evolution"
+x           = "50 Myr"       # geological notation supported
+y           = 7.0
+category    = "deep"
 ```
 
 Points whose `category` value does not match any defined `[[categories]]` id
@@ -215,11 +281,17 @@ the hover tooltip.
 Because all data lives in the TOML file, no Python knowledge is required to
 customise the plot. To add a new point:
 
-1. Decide on its x coordinate (log₁₀ seconds) and y coordinate (log₁₀ metres)
-   using the reference tables above.
-2. Append a `[[points]]` block anywhere in the file (order does not affect
-   the plot).
-3. Re-run the script.
+1. **Choose your time coordinate (x value):**
+   - **Easy way**: Use a human-readable string like `"2 weeks"` or `"5 years"`  
+   - **Traditional way**: Calculate log₁₀ seconds using the reference tables above
+2. **Choose your spatial coordinate (y value):** log₁₀ metres using the reference table above
+3. Append a `[[points]]` block anywhere in the file (order does not affect the plot)
+4. Re-run the script
+
+**Quick tip:** For x values, prefer human-readable strings — they're much more intuitive than calculating logarithms! For example:
+- `x = "1 hour"` instead of `x = 3.56`  
+- `x = "2 years"` instead of `x = 7.80`
+- `x = "100 Myr"` instead of `x = 15.50`
 
 To add a new category, append a `[[categories]]` block with a unique `id` and
 a chosen colour, then use that `id` in any `[[points]]` entries.

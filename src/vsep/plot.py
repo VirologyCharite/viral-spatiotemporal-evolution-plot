@@ -1,34 +1,11 @@
-#!/usr/bin/env python3
-"""
-Viral evolution timescale scatter plot.
+"""Plot building functions for viral spatiotemporal evolution plots."""
 
-Reads a TOML configuration file and produces an interactive Plotly
-scatter plot with hover descriptions for each data point.
-
-Usage
------
-    python virus_timescale.py                          # reads virus_timescale.toml, opens browser
-    python virus_timescale.py my_config.toml           # custom config
-    python virus_timescale.py -o plot.html             # save interactive HTML
-    python virus_timescale.py -o plot.png              # save static image (requires kaleido)
-
-Coordinate system (defined in the TOML)
------------------------------------------
-  x  =  log10(seconds)   e.g.  -3 = 1 ms   |  7.5 = 1 year   |  17.1 = 4 Gyr
-  y  =  log10(metres)    e.g.  -8 = 10 nm   |   0  = 1 m      |   7.7 = planetary
-"""
-
-from __future__ import annotations
-
-import argparse
-import sys
 import textwrap
-from pathlib import Path
-import tomllib
+from typing import Any
+
 import plotly.graph_objects as go
 
-
-# ── helpers ───────────────────────────────────────────────────────────────────
+from .config import process_points
 
 
 def wrap_html(text: str, width: int = 55) -> str:
@@ -36,15 +13,16 @@ def wrap_html(text: str, width: int = 55) -> str:
     return "<br>".join(textwrap.wrap(text, width=width))
 
 
-def load_config(path: Path) -> dict:
-    with open(path, "rb") as fh:
-        return tomllib.load(fh)
+def build_figure(cfg: dict[str, Any]) -> go.Figure:
+    """
+    Build a Plotly figure from configuration data.
 
+    Args:
+        cfg: Configuration dictionary loaded from TOML
 
-# ── figure ────────────────────────────────────────────────────────────────────
-
-
-def build_figure(cfg: dict) -> go.Figure:
+    Returns:
+        Plotly Figure object ready for display or export
+    """
     plot_cfg = cfg.get("plot", {})
     axes_cfg = cfg.get("axes", {})
     fonts_cfg = cfg.get("fonts", {})
@@ -63,10 +41,8 @@ def build_figure(cfg: dict) -> go.Figure:
     marker_size = plot_cfg.get("marker_size", 12)
     marker_opacity = plot_cfg.get("marker_opacity", 0.85)
 
-    # Group points by category
-    by_cat: dict[str, list] = {}
-    for pt in cfg.get("points", []):
-        by_cat.setdefault(pt.get("category", "unknown"), []).append(pt)
+    # Process points (including time string conversion)
+    by_cat = process_points(cfg)
 
     fig = go.Figure()
 
@@ -174,52 +150,3 @@ def build_figure(cfg: dict) -> go.Figure:
     )
 
     return fig
-
-
-# ── entry point ───────────────────────────────────────────────────────────────
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Viral evolution timescale scatter plot",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
-    )
-    parser.add_argument(
-        "--config",
-        default="data.toml",
-        help="Path to TOML config file (default: virus_timescale.toml)",
-    )
-    parser.add_argument(
-        "--output",
-        "-o",
-        default=None,
-        metavar="FILE",
-        help=(
-            "Output file. Use .html for interactive, "
-            ".png / .pdf / .svg for static (requires kaleido: "
-            "run 'pip install kaleido' or 'uv add kaleido')."
-        ),
-    )
-    args = parser.parse_args()
-
-    cfg_path = Path(args.config)
-    if not cfg_path.exists():
-        sys.exit(f"Config file not found: {cfg_path}")
-
-    fig = build_figure(load_config(cfg_path))
-
-    if args.output:
-        out = Path(args.output)
-        if out.suffix.lower() == ".html":
-            fig.write_html(str(out), include_plotlyjs="cdn")
-            print(f"Saved interactive HTML → {out}")
-        else:
-            fig.write_image(str(out))
-            print(f"Saved image → {out}")
-    else:
-        fig.show()
-
-
-if __name__ == "__main__":
-    main()

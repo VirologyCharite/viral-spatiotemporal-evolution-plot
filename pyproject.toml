@@ -1,10 +1,36 @@
 [project]
 name = "viral-spatiotemporal-evolution-plot"
 version = "0.1.0"
-description = "Add your description here"
+description = "Interactive scatter plot for viral evolution across spatiotemporal scales"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "kaleido>=1.2.0",
     "plotly>=6.7.0",
+    "pytimeparse>=1.1.8",
+]
+
+[project.scripts]
+make-plot = "vsep.cli.main:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
 ]
