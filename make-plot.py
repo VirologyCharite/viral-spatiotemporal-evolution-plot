@@ -135,6 +135,7 @@ def build_figure(cfg: dict) -> go.Figure:
             bordercolor="rgba(0,0,0,0)",
         ),
         legend=dict(
+            title=dict(text=plot_cfg.get("legend_title", "")),
             font=dict(family=font_family, size=legend_size),
             bgcolor="rgba(255,255,255,0.9)",
             bordercolor="#CBD5E1",

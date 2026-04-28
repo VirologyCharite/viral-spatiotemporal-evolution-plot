@@ -3,21 +3,22 @@
 #
 # Coordinate system
 # -----------------
-#   x  =  log10(seconds)   e.g.  -3.0 = 1 ms  |  7.5 = 1 year  |  17.1 = 4 Gyr
+#   x  =  log10(seconds)   e.g.  -3.0 = 1 ms   |  7.5 = 1 year  |  17.1 = 4 Gyr
 #   y  =  log10(metres)    e.g.  -8.0 = 10 nm  |  0.0 = 1 m     |  7.7 = planetary
 #
 # Quick reference — common x values
-#   -3.0  1 ms        1.78  1 min      3.56  1 hr       4.94  1 day
+#   -3.0   1 ms        1.78  1 min      3.56  1 hr        4.94  1 day
 #    6.43  1 month     7.50  1 year     9.50  1 century  11.50  10,000 yr
 #   13.50  1 Myr      15.50  100 Myr   17.10  4 Gyr
 #
 # Quick reference — common y values
-#   -8.0  subcellular (~10 nm)    -5.0  cell (~10 µm)    0.0  organism (~1 m)
+#   -8.0  subcellular (~10 nm)    -5.0  cell (~10 µm)     0.0  organism (~1 m)
 #    4.0  regional (~10 km)        6.0  continental       7.7  global / planetary
 # ─────────────────────────────────────────────────────────────────────────────
 
 [plot]
 title                 = "Viral Evolution Across Scales"
+legend_title          = "Spatiotemporal extent"
 width                 = 960
 height                = 620
 marker_size           = 12
