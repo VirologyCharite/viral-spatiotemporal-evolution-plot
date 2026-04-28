@@ -1,0 +1,237 @@
+# Viral Evolution Spatiotemporal Scatter Plot
+
+An interactive scatter plot that positions events in viral evolution on two
+logarithmic axes: **time** (the duration over which the event operates) and
+**space** (the physical scale at which it occurs). The result spans roughly 20
+orders of magnitude on each axis — from a polymerase misincorporating a
+nucleotide in milliseconds at the subcellular scale, to the conservation of a
+capsid protein fold across four billion years of planetary history.
+
+Intended for use as a visual for a class on viral evolution, though
+the script is general enough to be adapted for any two-axis
+logarithmic scatter plot driven by a config file.
+
+Note: the code and this documentation were written by Claude code then
+lightly edited.
+
+---
+
+## Files
+
+| File | Purpose |
+|---|---|
+| `make-plot.py` | Python script that reads the TOML and produces the plot |
+| `data.toml` | All data and styling — edit this to change the plot |
+
+---
+
+## Requirements
+
+```
+python >= 3.11
+plotly >= 5.0
+kaleido # optional — only needed for PNG / PDF / SVG export
+```
+
+Install dependencies:
+
+```bash
+pip install plotly kaleido
+```
+
+---
+
+## Usage
+
+```bash
+# Open the plot interactively in a browser window (default config file)
+python make-plot.py
+
+# Specify a different TOML file
+python make-plot.py --config my_config.toml
+
+# Save as a self-contained interactive HTML file
+python make-plot.py -o plot.html
+
+# Save as a static image (requires kaleido)
+python make-plot.py -o plot.png
+python make-plot.py -o plot.pdf
+python make-plot.py -o plot.svg
+```
+
+The default config file is `data.toml` in the current directory. If
+it is not found, the script will exit with an error message.
+
+---
+
+## Coordinate system
+
+Both axes are logarithmic. The raw values stored in the TOML are the
+*exponents*:
+
+### X axis — duration of the event (log₁₀ seconds)
+
+| x value | Meaning |
+|---|---|
+| −3.0 | 1 millisecond |
+| 1.78 | 1 minute |
+| 3.56 | 1 hour |
+| 4.94 | 1 day |
+| 6.43 | 1 month |
+| 7.50 | 1 year |
+| 9.50 | 1 century |
+| 11.50 | 10,000 years |
+| 13.50 | 1 million years |
+| 15.50 | 100 million years |
+| 17.10 | ~4 billion years |
+
+### Y axis — spatial scale (log₁₀ metres)
+
+| y value | Meaning |
+|---|---|
+| −8.0 | Subcellular (~10 nm, viral particle scale) |
+| −5.0 | Cell (~10 µm) |
+|  0.0 | Organism (~1 m) |
+|  4.0 | Regional (~10 km) |
+|  6.0 | Continental (~1,000 km) |
+|  7.7 | Global / planetary |
+
+---
+
+## TOML configuration reference
+
+The config file has five sections.
+
+### `[plot]` — overall figure settings
+
+```toml
+[plot]
+title                 = "Viral Evolution Across Scales"
+width                 = 960          # pixels
+height                = 620          # pixels
+marker_size           = 12           # point diameter in pixels
+marker_opacity        = 0.85         # 0.0 – 1.0
+background_color      = "white"      # outer figure background
+plot_background_color = "white"      # inner plot area background
+hover_background      = "rgba(27,42,74,0.95)"
+hover_text_color      = "white"
+margin_left           = 90           # pixels
+margin_right          = 40
+margin_top            = 70
+margin_bottom         = 95
+```
+
+### `[fonts]` — typography
+
+```toml
+[fonts]
+family           = "Georgia, serif"  # CSS font-family string
+title_size       = 18                # pt
+axis_label_size  = 14
+tick_size        = 11
+legend_size      = 12
+hover_size       = 12
+hover_wrap_width = 55    # characters before wrapping hover description text
+```
+
+### `[axes]` — axis configuration
+
+```toml
+[axes]
+x_label      = "Duration of event  →"
+x_min        = -3.8         # left edge of x axis
+x_max        = 17.7         # right edge of x axis
+x_tick_angle = -40          # degrees; negative = counter-clockwise
+y_label      = "Spatial scale  →"
+y_min        = -9.4
+y_max        =  8.7
+y_tick_angle = 0
+show_grid    = true
+grid_color   = "#E8EEF4"
+```
+
+Tick marks are specified as arrays of `{value, label}` pairs. Add, remove, or
+relabel ticks freely — only `value` (the log₁₀ position) and `label` (the
+display string) are required:
+
+```toml
+[[axes.x_ticks]]
+value = 7.50
+label = "1 year"
+
+[[axes.x_ticks]]
+value = 9.50
+label = "1 century"
+```
+
+The same pattern applies to `[[axes.y_ticks]]`.
+
+### `[[categories]]` — legend groups
+
+Each category defines a colour and a legend label. Points are assigned to
+categories by matching the `id` string. Categories appear in the legend in the
+order they are defined.
+
+```toml
+[[categories]]
+id    = "molecular"
+label = "Molecular / subcellular"
+color = "#3B82F6"           # any CSS colour string
+
+[[categories]]
+id    = "epidemic"
+label = "Population / epidemic"
+color = "#F59E0B"
+```
+
+### `[[points]]` — data points
+
+Each point is a TOML array-of-tables entry. `label`, `x`, `y`, and `category`
+are required; `description` is optional but strongly recommended — it is the
+text that appears in the hover tooltip.
+
+```toml
+[[points]]
+label       = "Seasonal influenza antigenic drift"
+x           = 7.5       # log10 seconds → ~1 year
+y           = 7.1       # log10 metres  → global scale
+category    = "epidemic"
+description = "HA/NA accumulate mutations under antibody pressure over 1–2
+years — enough to require annual vaccine reformulation globally."
+```
+
+Points whose `category` value does not match any defined `[[categories]]` id
+are silently ignored. Points with no `description` will show only the label in
+the hover tooltip.
+
+---
+
+## Adding or editing points
+
+Because all data lives in the TOML file, no Python knowledge is required to
+customise the plot. To add a new point:
+
+1. Decide on its x coordinate (log₁₀ seconds) and y coordinate (log₁₀ metres)
+   using the reference tables above.
+2. Append a `[[points]]` block anywhere in the file (order does not affect
+   the plot).
+3. Re-run the script.
+
+To add a new category, append a `[[categories]]` block with a unique `id` and
+a chosen colour, then use that `id` in any `[[points]]` entries.
+
+---
+
+## Output notes
+
+**Interactive HTML** (`-o plot.html`) produces a fully self-contained file with
+Plotly bundled via CDN reference. Hover over any point to read its description.
+The legend is clickable — click a category to hide or show it; double-click to
+isolate it.
+
+**Static images** (`-o plot.png`, `.pdf`, `.svg`) require the `kaleido` package.
+Kaleido uses a headless Chromium instance internally; on first run it may take a
+few seconds longer than expected.
+
+**Browser display** (no `-o` flag) opens a local server and launches the default
+browser automatically via Plotly's built-in `fig.show()`.

@@ -1,0 +1,349 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# virus_timescale.toml  —  configuration for the viral evolution scatter plot
+#
+# Coordinate system
+# -----------------
+#   x  =  log10(seconds)   e.g.  -3.0 = 1 ms  |  7.5 = 1 year  |  17.1 = 4 Gyr
+#   y  =  log10(metres)    e.g.  -8.0 = 10 nm  |  0.0 = 1 m     |  7.7 = planetary
+#
+# Quick reference — common x values
+#   -3.0  1 ms        1.78  1 min      3.56  1 hr       4.94  1 day
+#    6.43  1 month     7.50  1 year     9.50  1 century  11.50  10,000 yr
+#   13.50  1 Myr      15.50  100 Myr   17.10  4 Gyr
+#
+# Quick reference — common y values
+#   -8.0  subcellular (~10 nm)    -5.0  cell (~10 µm)    0.0  organism (~1 m)
+#    4.0  regional (~10 km)        6.0  continental       7.7  global / planetary
+# ─────────────────────────────────────────────────────────────────────────────
+
+[plot]
+title                 = "Viral Evolution Across Scales"
+width                 = 960
+height                = 620
+marker_size           = 12
+marker_opacity        = 0.85
+background_color      = "white"
+plot_background_color = "white"
+hover_background      = "rgba(27,42,74,0.95)"
+hover_text_color      = "white"
+margin_left           = 90
+margin_right          = 40
+margin_top            = 70
+margin_bottom         = 95
+
+[fonts]
+family           = "Georgia, serif"
+title_size       = 18
+axis_label_size  = 14
+tick_size        = 11
+legend_size      = 12
+hover_size       = 12
+hover_wrap_width = 55   # characters before wrapping hover description text
+
+[axes]
+x_label      = "Duration of event  →"
+x_min        = -3.8
+x_max        = 17.7
+x_tick_angle = -40
+y_label      = "Spatial scale  →"
+y_min        = -9.4
+y_max        =  8.7
+y_tick_angle = 0
+show_grid    = true
+grid_color   = "#E8EEF4"
+
+# Tick positions and labels for x axis (log10 seconds)
+[[axes.x_ticks]]
+value = -3.0
+label = "1 ms"
+
+[[axes.x_ticks]]
+value = 1.78
+label = "1 min"
+
+[[axes.x_ticks]]
+value = 3.56
+label = "1 hr"
+
+[[axes.x_ticks]]
+value = 4.94
+label = "1 day"
+
+[[axes.x_ticks]]
+value = 7.50
+label = "1 year"
+
+[[axes.x_ticks]]
+value = 9.50
+label = "1 century"
+
+[[axes.x_ticks]]
+value = 11.50
+label = "10,000 yr"
+
+[[axes.x_ticks]]
+value = 13.50
+label = "1 Myr"
+
+[[axes.x_ticks]]
+value = 15.50
+label = "100 Myr"
+
+[[axes.x_ticks]]
+value = 17.10
+label = "4 Gyr"
+
+# Tick positions and labels for y axis (log10 metres)
+[[axes.y_ticks]]
+value = -8.0
+label = "Subcellular"
+
+[[axes.y_ticks]]
+value = -5.0
+label = "Cell"
+
+[[axes.y_ticks]]
+value =  0.0
+label = "Organism"
+
+[[axes.y_ticks]]
+value =  4.0
+label = "Regional"
+
+[[axes.y_ticks]]
+value =  6.0
+label = "Continental"
+
+[[axes.y_ticks]]
+value =  7.7
+label = "Global / planetary"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Categories  —  define the legend label and dot colour for each group.
+# The order here controls the order in the legend.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[[categories]]
+id    = "molecular"
+label = "Molecular / subcellular"
+color = "#3B82F6"
+
+[[categories]]
+id    = "within"
+label = "Within-host evolution"
+color = "#10B981"
+
+[[categories]]
+id    = "epidemic"
+label = "Population / epidemic"
+color = "#F59E0B"
+
+[[categories]]
+id    = "deep"
+label = "Deep evolutionary time"
+color = "#A855F7"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Data points
+# Required fields: label, x, y, category
+# Optional:        description (shown in hover tooltip)
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Molecular / subcellular ──────────────────────────────────────────────────
+
+[[points]]
+label       = "RdRp nucleotide misincorporation"
+x           = -3.0
+y           = -8.2
+category    = "molecular"
+description = "An RdRp incorporates the wrong nucleotide once every ~10 s of copying — the fastest evolutionary event in virology, and the raw material of all RNA virus diversity."
+
+[[points]]
+label       = "Ribosomal frameshifting"
+x           = -1.5
+y           = -7.4
+category    = "molecular"
+description = "Programmed −1 ribosomal frameshifting (HIV, coronaviruses) occurs in milliseconds, generating multiple proteins from one genome — a single molecular event with profound functional consequences."
+
+[[points]]
+label       = "Capsid self-assembly"
+x           = 2.5
+y           = -7.0
+category    = "molecular"
+description = "Viral coat proteins assemble around the genome in minutes, driven by thermodynamics alone — no enzymatic energy required. One of biology's most elegant examples of self-organisation."
+
+[[points]]
+label       = "APOBEC3 deamination of retroviral genome"
+x           = 3.2
+y           = -8.0
+category    = "molecular"
+description = "Host APOBEC3 hypermutates the retroviral genome during reverse transcription. Its molecular signatures remain readable in ERV sequences tens of millions of years later — the arms race fossilised at the molecular scale."
+
+[[points]]
+label       = "Viral membrane budding"
+x           = 2.0
+y           = -6.0
+category    = "molecular"
+description = "Enveloped viruses bud from the plasma membrane in minutes, hijacking host ESCRT machinery — the moment a new virion first becomes physically independent of its host cell."
+
+# ── Within-host evolution ────────────────────────────────────────────────────
+
+[[points]]
+label       = "Phage replication cycle (~25 min)"
+x           = 3.0
+y           = -5.5
+category    = "within"
+description = "Bacteriophage T4 completes a full lytic cycle in ~25 minutes. In a single day, a phage population undergoes more generations than mammals have completed in 100 million years."
+
+[[points]]
+label       = "Influenza replication cycle (~8 hr)"
+x           = 3.6
+y           = -4.0
+category    = "within"
+description = "Influenza completes one replication cycle in ~8 hr within a respiratory epithelial cell, generating hundreds of progeny — most defective, some carrying novel mutations that may prove advantageous."
+
+[[points]]
+label       = "HIV replication cycle (~2 days)"
+x           = 4.9
+y           = -2.5
+category    = "within"
+description = "HIV replicates with a ~2-day cycle; ~10¹⁰ virions produced daily in untreated infection. Each generation is another round of mutation and selection — evolution at the speed of disease."
+
+[[points]]
+label       = "HIV quasispecies turnover (weeks)"
+x           = 6.2
+y           = 0.3
+category    = "within"
+description = "The entire circulating HIV quasispecies in a patient turns over multiple times per week — a complete evolving ecosystem in miniature, observable in real time."
+
+[[points]]
+label       = "Drug resistance emergence (weeks–months)"
+x           = 7.1
+y           = -0.3
+category    = "within"
+description = "Resistance mutations pre-existing at 1-in-10⁵ frequency can fix within weeks of starting monotherapy. Selection is extreme — non-resistant virus is effectively dead. This is why combination therapy is required."
+
+[[points]]
+label       = "Chronic within-host immune escape (years)"
+x           = 8.3
+y           = -0.5
+category    = "within"
+description = "Over years of chronic HIV infection, escape mutations accumulate across the full CTL repertoire — a complete evolutionary trajectory observable within a single patient's clinical records."
+
+# ── Population / epidemic ────────────────────────────────────────────────────
+
+[[points]]
+label       = "Oceanic viral shunt (daily, planetary)"
+x           = 4.9
+y           = 7.8
+category    = "epidemic"
+description = "Viral lysis of marine bacteria diverts ~25% of ocean primary production daily — the same replication process that causes disease, simultaneously operating as a planetary biogeochemical cycle. Note: same timescale as the HIV replication cycle, 17 orders of magnitude higher in spatial scale."
+
+[[points]]
+label       = "SARS-CoV-2 variant emergence (months)"
+x           = 6.8
+y           = 7.3
+category    = "epidemic"
+description = "Omicron acquired >30 spike mutations in months — probably in a single immunocompromised host — then spread globally. Within-host evolution projecting directly onto pandemic scale."
+
+[[points]]
+label       = "Seasonal influenza antigenic drift"
+x           = 7.5
+y           = 7.1
+category    = "epidemic"
+description = "HA/NA accumulate mutations under antibody pressure over 1–2 years — enough to require annual vaccine reformulation globally. Influenza's evolutionary clock is calibrated on vaccine committee meetings."
+
+[[points]]
+label       = "SARS-CoV-1 epidemic (2002–03)"
+x           = 7.3
+y           = 6.8
+category    = "epidemic"
+description = "~8,000 cases, contained in months — but the first demonstration that bat coronaviruses could cause severe human disease. The evolutionary warning shot before SARS-CoV-2."
+
+[[points]]
+label       = "1918 influenza pandemic"
+x           = 8.0
+y           = 7.5
+category    = "epidemic"
+description = "A reassortment event producing a novel HA swept the globe in ~2 years, killing up to 100 million people. The virus was later reconstructed from permafrost and archival lung tissue decades after the pandemic."
+
+[[points]]
+label       = "HIV pandemic origin (~1920, century scale)"
+x           = 9.5
+y           = 7.4
+category    = "epidemic"
+description = "One spillover of SIVcpz into humans in Kinshasa ~1920 became a global pandemic of 85 million infections over a century — the slowest pandemic build-up in the modern virological record."
+
+# ── Deep evolutionary time ───────────────────────────────────────────────────
+
+[[points]]
+label       = "Pithovirus revived from permafrost (30,000 yr)"
+x           = 12.0
+y           = 4.0
+category    = "deep"
+description = "A 30,000-yr-old giant virus revived from Siberian permafrost and found to be still infectious. As Arctic permafrost thaws under climate change, ancient viral lineages absent for millennia may re-emerge."
+
+[[points]]
+label       = "HBV in Neolithic remains (7,000 yr)"
+x           = 11.3
+y           = 7.0
+category    = "deep"
+description = "Hepatitis B virus sequences recovered from 7,000-yr-old skeletal remains across Eurasia — tracing ancient viral phylogeography alongside human migration since the Neolithic. Viruses as markers of human history."
+
+[[points]]
+label       = "SIV co-evolution with African primates (Myr)"
+x           = 13.5
+y           = 6.5
+category    = "deep"
+description = "SIV has co-evolved with dozens of African primate species for millions of years. HIV-1 is an extremely recent spillover on this timescale — a momentary perturbation in a much older relationship."
+
+[[points]]
+label       = "TRIM5α/CypA fusion in owl monkeys (~5 Myr)"
+x           = 13.0
+y           = 6.0
+category    = "deep"
+description = "A LINE-1 retrotransposition event fused CypA to TRIM5α in owl monkey ancestors ~5 Mya, creating a novel restriction factor against an ancient lentivirus — a permanent genetic scar of the host-virus arms race."
+
+[[points]]
+label       = "HERV integrations / syncytin co-option (~50 Myr)"
+x           = 14.7
+y           = 7.1
+category    = "deep"
+description = "Most HERVs integrated during mammalian radiation. Retroviral env genes were independently co-opted for placentation in multiple mammalian lineages — viruses repurposed as essential developmental machinery."
+
+[[points]]
+label       = "MHC/HLA diversification (~50 Myr)"
+x           = 14.5
+y           = 6.5
+category    = "deep"
+description = "Pathogen-driven balancing selection has maintained extraordinary HLA polymorphism for tens of millions of years — the most polymorphic locus in the human genome, shaped almost entirely by pathogen pressure."
+
+[[points]]
+label       = "Herpesvirus–vertebrate co-speciation (~400 Myr)"
+x           = 15.5
+y           = 7.5
+category    = "deep"
+description = "Herpesviruses co-diversified with vertebrates since the Devonian — approximately 400 million years of shared evolutionary history. Their phylogeny closely mirrors that of their vertebrate hosts."
+
+[[points]]
+label       = "RNA virus EVEs in vertebrates (~100+ Myr)"
+x           = 15.1
+y           = 7.2
+category    = "deep"
+description = "Bornavirus- and filovirus-like endogenous elements push these RNA virus lineages to >100 Mya — far older than any direct sequence evidence suggested, revealed only by genomic paleovirology."
+
+[[points]]
+label       = "Jelly-roll capsid fold (pre-LUCA, ~4 Gyr)"
+x           = 17.0
+y           = 7.8
+category    = "deep"
+description = "This beta-barrel structural domain is shared across viruses infecting organisms from all three domains of life — implying a common viral ancestor predating LUCA. Possibly the oldest molecular fossil on Earth."
+
+[[points]]
+label       = "RNA world replicators (~4 Gyr, local scale)"
+x           = 16.8
+y           = 1.5
+category    = "deep"
+description = "Hypothetical pre-cellular RNA replicators in hydrothermal vents or tidal pools — ancestral to viroids, ribozymes, and viral RdRps. The starting point of the entire spectrum, operating at purely local chemical scales before any cell existed."
