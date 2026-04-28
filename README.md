@@ -7,6 +7,10 @@ orders of magnitude on each axis — from a polymerase misincorporating a
 nucleotide in milliseconds at the subcellular scale, to the conservation of a
 capsid protein fold across four billion years of planetary history.
 
+Heres's an example plot (click to open the interactive version):
+
+[![Viral evolution spatiotemporal plot](docs/plot.png)](https://VirologyCharite.github.io/viral-spatiotemporal-evolution-plot/index.html)
+
 Intended for use as a visual for a class on viral evolution, though
 the script is general enough to be adapted for any two-axis
 logarithmic scatter plot driven by a config file.
