@@ -213,6 +213,20 @@ category    = "within"
 description = "HIV replicates with a ~2-day cycle; ~10¹⁰ virions produced daily in untreated infection. Each generation is another round of mutation and selection — evolution at the speed of disease."
 
 [[points]]
+label       = "Antibody escape (~10 days)"
+x           = "11 days"
+y           = -0.15
+category    = "within"
+description = "Viral particles with altered surface proteins not bound by antibodies generated in an adaptive response."
+
+[[points]]
+label       = "T cell escape (~one week)"
+x           = "7 days"
+y           = 0.15
+category    = "within"
+description = "Viral proteins with novel peptides (presented by MHC molecules) no longer recognized in an adaptive response."
+
+[[points]]
 label       = "HIV quasispecies turnover (weeks)"
 x           = 6.2
 y           = 0.3

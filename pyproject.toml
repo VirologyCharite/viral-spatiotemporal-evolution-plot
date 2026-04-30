@@ -1,6 +1,6 @@
 [project]
 name = "viral-spatiotemporal-evolution-plot"
-version = "0.1.0"
+version = "0.1.1"
 description = "Interactive scatter plot for viral evolution across spatiotemporal scales"
 readme = "README.md"
 requires-python = ">=3.13"
